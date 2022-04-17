@@ -21,7 +21,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.debug("Запрос на добавление фильма - {}", film);
+        log.debug("Запрос на добавление фильма - {}", film.getName());
 
         validate(film);
 
@@ -31,7 +31,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.debug("Запрос на обновление фильма - {}", film);
+        log.debug("Запрос на обновление фильма c id- {}", film.getId());
 
         validate(film);
 
@@ -46,7 +46,7 @@ public class FilmController {
 
     private void validate(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(RELEASE_DATE_MIN)) {
-            log.debug("Ошибка валидации фильма - {}", film);
+            log.debug("Ошибка валидации фильма - {}", film.getName());
             throw new ValidationException("Дата фильма меньше " + RELEASE_DATE_MIN);
         }
     }

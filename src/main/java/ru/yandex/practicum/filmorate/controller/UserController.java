@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) throws ValidationException {
-        log.debug("Запрос на добавление пользователя - {}", user);
+        log.debug("Запрос на добавление пользователя - {}", user.getLogin());
 
         validate(user);
         updateNameUser(user);
@@ -30,7 +30,7 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) throws ValidationException {
-        log.debug("Запрос на обновление пользователя - {}", user);
+        log.debug("Запрос на обновление пользователя - {}", user.getLogin());
 
         validate(user);
 
@@ -51,7 +51,7 @@ public class UserController {
 
     private void validate(User user) throws ValidationException {
         if (StringUtils.containsWhitespace(user.getLogin())) {
-            log.debug("Ошибка валидации пользователя - {}", user);
+            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
             throw new ValidationException("Логин содержит пробелы");
         }
     }
