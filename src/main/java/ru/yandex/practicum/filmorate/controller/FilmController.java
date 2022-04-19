@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.service.ValidationException;
@@ -45,9 +46,21 @@ public class FilmController {
     }
 
     private void validate(Film film) throws ValidationException {
+        if (((film.getName() == null)) || (film.getName().isBlank())) {
+            log.debug("Ошибка валидации фильма - {}", film.getName());
+            throw new ValidationException("Наименование должно быть заполнено");
+        }
+        if (film.getDescription().length() > 200) {
+            log.debug("Ошибка валидации фильма - {}", film.getName());
+            throw new ValidationException("Длина описания не должна превышать 200 символов");
+        }
         if (film.getReleaseDate().isBefore(RELEASE_DATE_MIN)) {
             log.debug("Ошибка валидации фильма - {}", film.getName());
             throw new ValidationException("Дата фильма меньше " + RELEASE_DATE_MIN);
+        }
+        if (film.getDuration() < 0) {
+            log.debug("Ошибка валидации фильма - {}", film.getName());
+            throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
     }
 }

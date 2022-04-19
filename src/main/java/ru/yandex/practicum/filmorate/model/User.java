@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.model.service.IdGenerator;
+import ru.yandex.practicum.filmorate.model.service.IdGeneratorUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +19,7 @@ public class User {
     @NotBlank
     private String login;
     private String name;
-    private long id = IdGenerator.nextId();
+    private long id = IdGeneratorUser.nextId();
     @Email
     private String email;
     @PastOrPresent

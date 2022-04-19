@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.service.ValidationException;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +51,17 @@ public class UserController {
     }
 
     private void validate(User user) throws ValidationException {
-        if (StringUtils.containsWhitespace(user.getLogin())) {
+        if ((user.getEmail().isBlank()) || (!user.getEmail().contains("@"))) {
             log.debug("Ошибка валидации пользователя - {}", user.getLogin());
-            throw new ValidationException("Логин содержит пробелы");
+            throw new ValidationException("Почта не соответствует формату email");
+        }
+        if (user.getBirthday().isAfter(LocalDateTime.now().toLocalDate())) {
+            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
+            throw new ValidationException("Дата рождения находится в будущем");
+        }
+        if ((StringUtils.containsWhitespace(user.getLogin()) || (user.getLogin().isBlank()))) {
+            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
+            throw new ValidationException("Логин содержит пробелы или пустой");
         }
     }
 }
