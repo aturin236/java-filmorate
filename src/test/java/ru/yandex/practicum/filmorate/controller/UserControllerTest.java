@@ -22,7 +22,7 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_ThrowException_WhenLoginWithWhitespace() {
+    void should_ThrowException_WhenLoginWithWhitespace() {
         User user = User.builder()
                 .login("логин 1")
                 .name("логин")
@@ -38,7 +38,7 @@ class UserControllerTest {
 
     @ParameterizedTest
     @MethodSource("argsProviderFactoryForTestEmail")
-    void Should_ThrowException_WhenEmailFailed(User user) {
+    void should_ThrowException_WhenEmailFailed(User user) {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> userController.addUser(user));
@@ -64,7 +64,7 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_ThrowException_WhenBirthdayFromFuture() {
+    void should_ThrowException_WhenBirthdayFromFuture() {
         User user = User.builder()
                 .login("логин1")
                 .name("логин")
@@ -79,7 +79,7 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_AddUser_WithSuccess() throws ValidationException {
+    void should_AddUser_WithSuccess() throws ValidationException {
         User user = User.builder()
                 .login("логин1")
                 .name("логин")

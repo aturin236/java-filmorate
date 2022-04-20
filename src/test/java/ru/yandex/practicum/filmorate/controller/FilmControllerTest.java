@@ -21,7 +21,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void Should_ThrowException_WhenReleaseDateOld() {
+    void should_ThrowException_WhenReleaseDateOld() {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("")
@@ -37,7 +37,7 @@ class FilmControllerTest {
 
     @ParameterizedTest
     @MethodSource("argsProviderFactoryForTestLogin")
-    void Should_ThrowException_WhenLoginNullOrEmpty(Film film) {
+    void should_ThrowException_WhenLoginNullOrEmpty(Film film) {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> filmController.addFilm(film));
@@ -63,7 +63,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void Should_ThrowException_WhenDescriptionTooLong() {
+    void should_ThrowException_WhenDescriptionTooLong() {
         String sb = "1".repeat(201);
         Film film = Film.builder()
                 .name("Фильм")
@@ -79,7 +79,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void Should_ThrowException_WhenDurationLess0() {
+    void should_ThrowException_WhenDurationLess0() {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("")
@@ -94,7 +94,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void Should_AddFilm_WithSuccess() throws ValidationException {
+    void should_AddFilm_WithSuccess() throws ValidationException {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("")
