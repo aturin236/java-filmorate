@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.yandex.practicum.filmorate.model.service.IdGeneratorFilm;
 
 import javax.validation.constraints.NotBlank;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 public class Film {
     @NotBlank
     private String name;
+    @EqualsAndHashCode.Exclude
     private long id = IdGeneratorFilm.nextId();
     @Size(max = 200)
     private String description;

@@ -3,13 +3,15 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.service.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -43,5 +45,12 @@ public class UserController {
         return userStorage.getAllUsers();
     }
 
-
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        Optional<User> user = userStorage.getUserById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(String.format("Не найден пользователь с id=%s", id));
+        }
+        return user.get();
+    }
 }

@@ -2,13 +2,15 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.service.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -40,6 +42,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         return films.values();
     }
 
+    @Override
+    public Optional<Film> getFilmById(Long id) {
+        return Optional.ofNullable(films.get(id));
+    }
+
     private void validate(Film film) throws ValidationException {
         if (((film.getName() == null)) || (film.getName().isBlank())) {
             log.debug("Ошибка валидации фильма - {}", film.getName());
@@ -56,6 +63,9 @@ public class InMemoryFilmStorage implements FilmStorage{
         if (film.getDuration() < 0) {
             log.debug("Ошибка валидации фильма - {}", film.getName());
             throw new ValidationException("Продолжительность фильма должна быть положительной");
+        }
+        if (films.containsValue(film)) {
+            throw new FilmAlreadyExistException(String.format("Фильм с наименованием %s уже добавлен", film.getName()));
         }
     }
 }

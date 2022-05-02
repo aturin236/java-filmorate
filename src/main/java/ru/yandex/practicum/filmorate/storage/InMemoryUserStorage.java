@@ -3,13 +3,16 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.service.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -38,6 +41,11 @@ public class InMemoryUserStorage implements UserStorage{
         return users.values();
     }
 
+    @Override
+    public Optional<User> getUserById(Long id) {
+        return Optional.ofNullable(users.get(id));
+    }
+
     private void updateNameUser(User user) {
         if ((user.getName() == null) || (user.getName().trim().isEmpty())) {
             user.setName(user.getLogin());
@@ -56,6 +64,10 @@ public class InMemoryUserStorage implements UserStorage{
         if ((StringUtils.containsWhitespace(user.getLogin()) || (user.getLogin().isBlank()))) {
             log.debug("Ошибка валидации пользователя - {}", user.getLogin());
             throw new ValidationException("Логин содержит пробелы или пустой");
+        }
+        if (users.containsValue(user)) {
+            throw new UserAlreadyExistException(String.format("Пользователь с логином %s уже добавлен",
+                    user.getLogin()));
         }
     }
 }

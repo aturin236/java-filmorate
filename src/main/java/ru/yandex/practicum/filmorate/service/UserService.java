@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -18,20 +19,31 @@ public class UserService {
    }
 
     public void addFriend(Long userId, Long friendId) {
+        checkUserAvailability(userId);
+        checkUserAvailability(friendId);
+
         addFriendToUser(userId, friendId);
         addFriendToUser(friendId, userId);
     }
 
     public void deleteFriend(Long userId, Long friendId) {
+        checkUserAvailability(userId);
+        checkUserAvailability(friendId);
+
         deleteFriendToUser(userId, friendId);
         deleteFriendToUser(friendId, userId);
     }
 
     public Optional<Collection<Long>> getFriends(Long userId) {
+        checkUserAvailability(userId);
+
         return Optional.ofNullable(friends.get(userId));
     }
 
     public Optional<Collection<Long>> getCommonFriends(Long userId, Long friendId) {
+        checkUserAvailability(userId);
+        checkUserAvailability(friendId);
+
         Set<Long> userFriends = friends.get(userId);
         if (userFriends == null) return Optional.empty();
 
@@ -55,5 +67,11 @@ public class UserService {
 
         userFriends.remove(friendId);
         friends.put(userId, userFriends);
+    }
+
+    private void checkUserAvailability(Long id) {
+        if (userStorage.getUserById(id).isEmpty()) {
+            throw new UserNotFoundException(String.format("Не найден пользователь с id=%s", id));
+        }
     }
 }
