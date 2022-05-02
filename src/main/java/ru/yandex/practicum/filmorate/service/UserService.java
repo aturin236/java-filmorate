@@ -3,9 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -34,24 +36,29 @@ public class UserService {
         deleteFriendToUser(friendId, userId);
     }
 
-    public Optional<Collection<Long>> getFriends(Long userId) {
+    public Collection<User> getFriends(Long userId) {
         checkUserAvailability(userId);
 
-        return Optional.ofNullable(friends.get(userId));
+        return friends.getOrDefault(userId, new HashSet<>()).stream()
+                .map(x -> userStorage.getUserById(x).get())
+                .collect(Collectors.toList());
     }
 
-    public Optional<Collection<Long>> getCommonFriends(Long userId, Long friendId) {
+    public Collection<User> getCommonFriends(Long userId, Long friendId) {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
         Set<Long> userFriends = friends.get(userId);
-        if (userFriends == null) return Optional.empty();
+        if (userFriends == null) return null;
 
         Set<Long> friendFriends = friends.get(friendId);
-        if (friendFriends == null) return Optional.empty();
+        if (friendFriends == null) return null;
+
         userFriends.retainAll(friendFriends);
 
-        return Optional.of(userFriends);
+        return userFriends.stream()
+                .map(x -> userStorage.getUserById(x).get())
+                .collect(Collectors.toList());
     }
 
     private void addFriendToUser(Long userId, Long friendId) {

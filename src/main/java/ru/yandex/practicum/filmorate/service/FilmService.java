@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -44,14 +45,12 @@ public class FilmService {
         filmsLikes.put(userId, filmLikes);
     }
 
-    public Optional<Collection<Long>> getMostPopularFilms(Byte count) {
-        List<Long> mostPopularFilms = filmsLikes.entrySet().stream()
+    public Collection<Film> getMostPopularFilms(Byte count) {
+        return filmsLikes.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.comparing(Set::size)))
                 .limit(count)
-                .map(Map.Entry::getKey)
+                .map(x -> filmStorage.getFilmById(x.getKey()).get())
                 .collect(Collectors.toList());
-
-        return Optional.of(mostPopularFilms);
     }
 
     private void checkUserAvailability(Long id) {
