@@ -18,6 +18,7 @@ public class Film {
     @EqualsAndHashCode.Exclude
     private long id = IdGeneratorFilm.nextId();
     @Size(max = 200)
+    @NotBlank
     private String description;
     private LocalDate releaseDate;
     @Positive
