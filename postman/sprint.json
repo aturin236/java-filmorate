@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5bc299c1-f2a4-4e89-8ae7-26e06579ca77",
+		"_postman_id": "b6ce059c-fe25-473d-8ed8-dbbe6ae092ae",
 		"name": "API Test Sprint 2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -97,6 +97,67 @@
 							],
 							"cookie": [],
 							"body": ""
+						},
+						{
+							"name": "User Create",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"dolore\",\n  \"name\": \"Nick Name\",\n  \"email\": \"mail@mail.ru\",\n  \"birthday\": \"1946-08-20\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 02 May 2022 09:04:57 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"login\": \"dolore\",\n    \"name\": \"Nick Name\",\n    \"id\": 1,\n    \"email\": \"mail@mail.ru\",\n    \"birthday\": \"1946-08-20\"\n}"
 						}
 					]
 				},
@@ -107,8 +168,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 500\", function () {\r",
-									"    pm.response.to.have.status(500);\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -833,7 +894,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "2",
+									"value": "4",
 									"description": "(Required) "
 								}
 							]
@@ -1003,7 +1064,7 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
@@ -1029,7 +1090,7 @@
 								},
 								{
 									"key": "friendId",
-									"value": "2",
+									"value": "4",
 									"description": "(Required) "
 								}
 							]
@@ -1222,7 +1283,7 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
@@ -1661,7 +1722,7 @@
 								},
 								{
 									"key": "friendId",
-									"value": "2",
+									"value": "4",
 									"description": "(Required) "
 								}
 							]
@@ -1873,12 +1934,12 @@
 											"variable": [
 												{
 													"key": "id",
-													"value": "-29029902",
+													"value": "1",
 													"description": "(Required) "
 												},
 												{
 													"key": "userId",
-													"value": "-29029902",
+													"value": "1",
 													"description": "(Required) "
 												}
 											]
@@ -2079,12 +2140,12 @@
 											"variable": [
 												{
 													"key": "id",
-													"value": "-29029902",
+													"value": "1",
 													"description": "(Required) "
 												},
 												{
 													"key": "userId",
-													"value": "-29029902",
+													"value": "1",
 													"description": "(Required) "
 												}
 											]
@@ -2583,7 +2644,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": 76030770,\n  \"name\": \"labore nulla\",\n  \"releaseDate\": \"1979-04-17\",\n  \"description\": \"Duis in consequat esse\",\n  \"duration\": 47277389,\n  \"rate\": 44519530\n}",
+							"raw": "{\n  \"id\": 1,\n  \"name\": \"labore nulla\",\n  \"releaseDate\": \"1979-04-17\",\n  \"description\": \"Duis in consequat esse\",\n  \"duration\": 190\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2763,7 +2824,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": 76030770,\n  \"name\": \"labore nulla\",\n  \"releaseDate\": \"1979-04-17\",\n  \"description\": \"Duis in consequat esse\",\n  \"duration\": 47277389,\n  \"rate\": 44519530\n}",
+							"raw": "{\n  \"name\": \"labore nulla\",\n  \"releaseDate\": \"1979-04-17\",\n  \"description\": \"Duis in consequat esse\",\n  \"duration\": 180\n}",
 							"options": {
 								"raw": {
 									"language": "json"

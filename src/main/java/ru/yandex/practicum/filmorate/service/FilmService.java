@@ -28,26 +28,26 @@ public class FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        Set<Long> filmLikes = filmsLikes.getOrDefault(userId, new HashSet<>());
+        Set<Long> filmLikes = filmsLikes.getOrDefault(filmId, new HashSet<>());
         filmLikes.add(userId);
-        filmsLikes.put(userId, filmLikes);
+        filmsLikes.put(filmId, filmLikes);
     }
 
     public void deleteLike(Long filmId, Long userId) {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        Set<Long> filmLikes = filmsLikes.get(userId);
+        Set<Long> filmLikes = filmsLikes.get(filmId);
 
         if (filmLikes == null) return;
 
         filmLikes.remove(userId);
-        filmsLikes.put(userId, filmLikes);
+        filmsLikes.put(filmId, filmLikes);
     }
 
     public Collection<Film> getMostPopularFilms(Byte count) {
         return filmsLikes.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparing(Set::size)))
+                .sorted(Map.Entry.comparingByValue(Comparator.comparing(x -> 1 - x.size())))
                 .limit(count)
                 .map(x -> filmStorage.getFilmById(x.getKey()).get())
                 .collect(Collectors.toList());

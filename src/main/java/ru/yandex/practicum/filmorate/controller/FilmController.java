@@ -68,7 +68,7 @@ public class FilmController {
         filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular?count={count}")
+    @GetMapping("/popular")
     public Collection<Film> getTopFilms(
             @RequestParam(value = "count", defaultValue = "10", required = false) Byte count) {
         return filmService.getMostPopularFilms(count);
