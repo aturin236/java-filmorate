@@ -48,7 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     private void validate(Film film) throws ValidationException {
-        if (((film.getName() == null)) || (film.getName().isBlank())) {
+        if (film.getName() == null || film.getName().isBlank()) {
             log.debug("Ошибка валидации фильма - {}", film.getName());
             throw new ValidationException("Наименование должно быть заполнено");
         }

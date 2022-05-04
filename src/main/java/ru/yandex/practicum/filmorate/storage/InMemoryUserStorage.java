@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -53,7 +52,7 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     private void validate(User user) throws ValidationException {
-        if ((user.getEmail().isBlank()) || (!user.getEmail().contains("@"))) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.debug("Ошибка валидации пользователя - {}", user.getLogin());
             throw new ValidationException("Почта не соответствует формату email");
         }
@@ -61,7 +60,7 @@ public class InMemoryUserStorage implements UserStorage{
             log.debug("Ошибка валидации пользователя - {}", user.getLogin());
             throw new ValidationException("Дата рождения находится в будущем");
         }
-        if ((StringUtils.containsWhitespace(user.getLogin()) || (user.getLogin().isBlank()))) {
+        if (StringUtils.containsWhitespace(user.getLogin()) || user.getLogin().isBlank()) {
             log.debug("Ошибка валидации пользователя - {}", user.getLogin());
             throw new ValidationException("Логин содержит пробелы или пустой");
         }
