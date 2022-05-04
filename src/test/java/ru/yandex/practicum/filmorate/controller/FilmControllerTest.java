@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.service.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.factory.FilmStorageFactory;
+import ru.yandex.practicum.filmorate.storage.factory.UserStorageFactory;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -17,7 +20,13 @@ class FilmControllerTest {
 
     @BeforeEach
     void createContext() {
-        filmController = new FilmController();
+        filmController = new FilmController(
+                FilmStorageFactory.getDefault(),
+                new FilmService(
+                        FilmStorageFactory.getDefault(),
+                        UserStorageFactory.getDefault()
+                )
+        );
     }
 
     @Test

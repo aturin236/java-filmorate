@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.service.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.factory.UserStorageFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +20,12 @@ class UserControllerTest {
 
     @BeforeEach
     void createContext() {
-        userController = new UserController();
+        userController = new UserController(
+                UserStorageFactory.getDefault(),
+                new UserService(
+                        UserStorageFactory.getDefault()
+                )
+        );
     }
 
     @Test
