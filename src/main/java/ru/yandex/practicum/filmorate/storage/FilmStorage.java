@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface FilmStorage {
     Film addFilm(Film film) throws ValidationException;
 
-    Film updateFilm (Film film) throws ValidationException;
+    Film updateFilm(Film film) throws ValidationException;
 
     Collection<Film> getAllFilms();
 

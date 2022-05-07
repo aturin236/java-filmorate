@@ -21,7 +21,6 @@ class FilmControllerTest {
     @BeforeEach
     void createContext() {
         filmController = new FilmController(
-                FilmStorageFactory.getDefault(),
                 new FilmService(
                         FilmStorageFactory.getDefault(),
                         UserStorageFactory.getDefault()

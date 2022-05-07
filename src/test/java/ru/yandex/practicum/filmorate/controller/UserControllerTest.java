@@ -21,7 +21,6 @@ class UserControllerTest {
     @BeforeEach
     void createContext() {
         userController = new UserController(
-                UserStorageFactory.getDefault(),
                 new UserService(
                         UserStorageFactory.getDefault()
                 )
