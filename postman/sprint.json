@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ad78ec20-aaa3-4749-bc4e-aeb820b8f52d",
+		"_postman_id": "3f88c62a-d63c-4697-9477-10cb2814ee92",
 		"name": "API Test Sprint 2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1093,7 +1093,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "7",
+									"value": "2",
 									"description": "(Required) "
 								}
 							]
@@ -1289,7 +1289,7 @@
 								},
 								{
 									"key": "friendId",
-									"value": "7",
+									"value": "2",
 									"description": "(Required) "
 								}
 							]
@@ -1921,7 +1921,7 @@
 								},
 								{
 									"key": "friendId",
-									"value": "7",
+									"value": "2",
 									"description": "(Required) "
 								}
 							]

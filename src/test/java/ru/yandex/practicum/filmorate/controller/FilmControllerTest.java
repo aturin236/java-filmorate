@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.controller.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.factory.FilmStorageFactory;
@@ -30,7 +30,7 @@ class FilmControllerTest {
 
     @Test
     void should_ThrowException_WhenReleaseDateOld() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("Фильм")
                 .description("")
                 .id(1)
@@ -45,22 +45,22 @@ class FilmControllerTest {
 
     @ParameterizedTest
     @MethodSource("argsProviderFactoryForTestLogin")
-    void should_ThrowException_WhenLoginNullOrEmpty(Film film) {
+    void should_ThrowException_WhenLoginNullOrEmpty(FilmDTO film) {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> filmController.addFilm(film));
         assertTrue(exception.getMessage().contains("Наименование должно быть заполнено"));
     }
 
-    static Stream<Film> argsProviderFactoryForTestLogin() {
-        Film film1 = Film.builder()
+    static Stream<FilmDTO> argsProviderFactoryForTestLogin() {
+        FilmDTO film1 = FilmDTO.builder()
                 .name(null)
                 .description("")
                 .id(1)
                 .duration((short) 100)
                 .releaseDate(LocalDate.of(1989, 12, 12))
                 .build();
-        Film film2 = Film.builder()
+        FilmDTO film2 = FilmDTO.builder()
                 .name("")
                 .description("")
                 .id(1)
@@ -73,7 +73,7 @@ class FilmControllerTest {
     @Test
     void should_ThrowException_WhenDescriptionTooLong() {
         String sb = "1".repeat(201);
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("Фильм")
                 .description(sb)
                 .id(1)
@@ -88,7 +88,7 @@ class FilmControllerTest {
 
     @Test
     void should_ThrowException_WhenDurationLess0() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("Фильм")
                 .description("")
                 .id(1)
@@ -103,7 +103,7 @@ class FilmControllerTest {
 
     @Test
     void should_AddFilm_WithSuccess() throws ValidationException {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("Фильм")
                 .description("")
                 .id(1)

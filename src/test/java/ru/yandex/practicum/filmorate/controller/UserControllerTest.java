@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.controller.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.factory.UserStorageFactory;
@@ -29,7 +29,7 @@ class UserControllerTest {
 
     @Test
     void should_ThrowException_WhenLoginWithWhitespace() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .login("логин 1")
                 .name("логин")
                 .id(1)
@@ -44,22 +44,22 @@ class UserControllerTest {
 
     @ParameterizedTest
     @MethodSource("argsProviderFactoryForTestEmail")
-    void should_ThrowException_WhenEmailFailed(User user) {
+    void should_ThrowException_WhenEmailFailed(UserDTO user) {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> userController.addUser(user));
         assertTrue(exception.getMessage().contains("Почта не соответствует формату email"));
     }
 
-    static Stream<User> argsProviderFactoryForTestEmail() {
-        User user1 = User.builder()
+    static Stream<UserDTO> argsProviderFactoryForTestEmail() {
+        UserDTO user1 = UserDTO.builder()
                 .login("логин1")
                 .name("логин")
                 .id(1)
                 .email("mailmail.ru")
                 .birthday(LocalDate.of(1988, 12, 12))
                 .build();
-        User user2 = User.builder()
+        UserDTO user2 = UserDTO.builder()
                 .login("логин1")
                 .name("логин")
                 .id(1)
@@ -71,7 +71,7 @@ class UserControllerTest {
 
     @Test
     void should_ThrowException_WhenBirthdayFromFuture() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .login("логин1")
                 .name("логин")
                 .id(1)
@@ -86,7 +86,7 @@ class UserControllerTest {
 
     @Test
     void should_AddUser_WithSuccess() throws ValidationException {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .login("логин1")
                 .name("логин")
                 .id(1)
