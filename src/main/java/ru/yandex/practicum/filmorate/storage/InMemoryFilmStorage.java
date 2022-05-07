@@ -17,19 +17,17 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film addFilm(Film film) {
-        validate(film);
+        if (films.containsValue(film)) {
+            throw new FilmAlreadyExistException(String.format("Фильм с наименованием %s уже добавлен", film.getName()));
+        }
 
         films.put(film.getId(), film);
-
         return  film;
     }
 
     @Override
     public Film updateFilm(Film film) {
-        validate(film);
-
         films.put(film.getId(), film);
-
         return film;
     }
 
@@ -41,11 +39,5 @@ public class InMemoryFilmStorage implements FilmStorage{
     @Override
     public Optional<Film> getFilmById(Long id) {
         return Optional.ofNullable(films.get(id));
-    }
-
-    private void validate(Film film) {
-        if (films.containsValue(film)) {
-            throw new FilmAlreadyExistException(String.format("Фильм с наименованием %s уже добавлен", film.getName()));
-        }
     }
 }

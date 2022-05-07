@@ -15,7 +15,11 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User addUser(User user) {
-        validate(user);
+        if (users.containsValue(user)) {
+            throw new UserAlreadyExistException(String.format("Пользователь с логином %s уже добавлен",
+                    user.getLogin()));
+        }
+
         updateNameUser(user);
 
         users.put(user.getId(), user);
@@ -24,8 +28,6 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User updateUser(User user) {
-        validate(user);
-
         users.put(user.getId(), user);
         return user;
     }
@@ -43,13 +45,6 @@ public class InMemoryUserStorage implements UserStorage{
     private void updateNameUser(User user) {
         if ((user.getName() == null) || (user.getName().trim().isEmpty())) {
             user.setName(user.getLogin());
-        }
-    }
-
-    private void validate(User user) {
-        if (users.containsValue(user)) {
-            throw new UserAlreadyExistException(String.format("Пользователь с логином %s уже добавлен",
-                    user.getLogin()));
         }
     }
 }
