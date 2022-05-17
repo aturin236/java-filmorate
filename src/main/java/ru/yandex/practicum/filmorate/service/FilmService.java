@@ -26,7 +26,13 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) throws ValidationException {
-        return filmStorage.addFilm(film);
+        Film addedFilm = filmStorage.addFilm(film);
+
+        if (!filmsLikes.containsKey(film.getId())) {
+            filmsLikes.put(film.getId(), new HashSet<>());
+        }
+
+        return addedFilm;
     }
 
     public Film updateFilm(Film film) throws ValidationException {
@@ -59,6 +65,7 @@ public class FilmService {
         if (filmLikes == null) return;
 
         filmLikes.remove(userId);
+
         filmsLikes.put(filmId, filmLikes);
     }
 
