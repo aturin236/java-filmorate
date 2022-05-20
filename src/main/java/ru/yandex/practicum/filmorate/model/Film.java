@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import ru.yandex.practicum.filmorate.model.service.IdGeneratorFilm;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -16,7 +15,7 @@ public class Film {
     @NotBlank
     private String name;
     @EqualsAndHashCode.Exclude
-    private long id = IdGeneratorFilm.nextId();
+    private long id;
     @Size(max = 200)
     @NotBlank
     private String description;

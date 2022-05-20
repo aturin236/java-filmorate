@@ -1,26 +1,26 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Component
-@Slf4j
 public class InMemoryUserStorage implements UserStorage{
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public User addUser(User user) throws ValidationException {
-        validate(user);
+    public User addUser(User user) {
+        if (users.containsValue(user)) {
+            throw new UserAlreadyExistException(String.format("Пользователь с логином %s уже добавлен",
+                    user.getLogin()));
+        }
+
         updateNameUser(user);
 
         users.put(user.getId(), user);
@@ -28,9 +28,11 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User updateUser(User user) throws ValidationException {
-        validate(user);
-
+    public User updateUser(User user) {
+        if (getUserById(user.getId()).isEmpty()) {
+            throw new UserNotFoundException(String.format("Пользователь с id %s не найден",
+                    user.getId()));
+        }
         users.put(user.getId(), user);
         return user;
     }
@@ -48,25 +50,6 @@ public class InMemoryUserStorage implements UserStorage{
     private void updateNameUser(User user) {
         if ((user.getName() == null) || (user.getName().trim().isEmpty())) {
             user.setName(user.getLogin());
-        }
-    }
-
-    private void validate(User user) throws ValidationException {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
-            throw new ValidationException("Почта не соответствует формату email");
-        }
-        if (user.getBirthday().isAfter(LocalDateTime.now().toLocalDate())) {
-            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
-            throw new ValidationException("Дата рождения находится в будущем");
-        }
-        if (StringUtils.containsWhitespace(user.getLogin()) || user.getLogin().isBlank()) {
-            log.debug("Ошибка валидации пользователя - {}", user.getLogin());
-            throw new ValidationException("Логин содержит пробелы или пустой");
-        }
-        if (users.containsValue(user)) {
-            throw new UserAlreadyExistException(String.format("Пользователь с логином %s уже добавлен",
-                    user.getLogin()));
         }
     }
 }

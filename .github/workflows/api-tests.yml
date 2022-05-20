@@ -27,7 +27,6 @@ jobs:
       - name: Install newman
         run: |
           npm install -g newman
-
       - name: Install helper script
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y wget &&
           wget --no-check-certificate -P /tmp/ https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
@@ -36,7 +35,7 @@ jobs:
       - name: Checkout tests
         uses: actions/checkout@v3
         with:
-          repository: 'aturin236/java-filmorate'
+          repository: 'yandex-praktikum/java-filmorate'
           ref: ${{ github.event.pull_request.head.ref }}
           path: tests
 

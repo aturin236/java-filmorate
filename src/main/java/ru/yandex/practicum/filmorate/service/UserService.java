@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -19,6 +20,22 @@ public class UserService {
     public UserService(UserStorage userStorage) {
        this.userStorage = userStorage;
    }
+
+   public User addUser(User user) throws ValidationException {
+        return userStorage.addUser(user);
+   }
+
+   public User updateUser(User user) throws ValidationException {
+        return userStorage.updateUser(user);
+   }
+
+    public Collection<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        return userStorage.getUserById(id);
+    }
 
     public void addFriend(Long userId, Long friendId) {
         checkUserAvailability(userId);
@@ -49,14 +66,16 @@ public class UserService {
         checkUserAvailability(friendId);
 
         Set<Long> userFriends = friends.get(userId);
-        if (userFriends == null) return null;
+        if (userFriends == null) return new ArrayList<>();
 
         Set<Long> friendFriends = friends.get(friendId);
-        if (friendFriends == null) return null;
+        if (friendFriends == null) return new ArrayList<>();
 
-        userFriends.retainAll(friendFriends);
+        Set<Long> resultFriends = new HashSet<>(userFriends);
 
-        return userFriends.stream()
+        resultFriends.retainAll(friendFriends);
+
+        return resultFriends.stream()
                 .map(x -> userStorage.getUserById(x).get())
                 .collect(Collectors.toList());
     }

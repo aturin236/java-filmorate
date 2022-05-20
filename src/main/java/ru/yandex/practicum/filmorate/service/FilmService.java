@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -24,6 +25,28 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
+    public Film addFilm(Film film) throws ValidationException {
+        Film addedFilm = filmStorage.addFilm(film);
+
+        if (!filmsLikes.containsKey(film.getId())) {
+            filmsLikes.put(film.getId(), new HashSet<>());
+        }
+
+        return addedFilm;
+    }
+
+    public Film updateFilm(Film film) throws ValidationException {
+        return filmStorage.updateFilm(film);
+    }
+
+    public Collection<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
+
+    public Optional<Film> getFilmById(Long id) {
+        return filmStorage.getFilmById(id);
+    }
+
     public void addLike(Long filmId, Long userId) {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
@@ -42,6 +65,7 @@ public class FilmService {
         if (filmLikes == null) return;
 
         filmLikes.remove(userId);
+
         filmsLikes.put(filmId, filmLikes);
     }
 

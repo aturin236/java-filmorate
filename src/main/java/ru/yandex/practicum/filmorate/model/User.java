@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import ru.yandex.practicum.filmorate.model.service.IdGeneratorUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +16,7 @@ public class User {
     private String login;
     private String name;
     @EqualsAndHashCode.Exclude
-    private long id = IdGeneratorUser.nextId();
+    private long id;
     @Email
     private String email;
     @PastOrPresent

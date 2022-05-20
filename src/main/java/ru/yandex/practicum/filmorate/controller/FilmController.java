@@ -3,55 +3,60 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.controller.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.debug("Запрос на добавление фильма - {}", film.getName());
+    public FilmDTO addFilm(@Valid @RequestBody FilmDTO filmDTO) throws ValidationException {
+        log.debug("Запрос на добавление фильма - {}", filmDTO.getName());
 
-        return filmStorage.addFilm(film);
+        Film film = filmService.addFilm(FilmDTO.FilmDTOToFilm(filmDTO));
+
+        return FilmDTO.FilmToFilmDTO(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.debug("Запрос на обновление фильма c id- {}", film.getId());
+    public FilmDTO updateFilm(@Valid @RequestBody FilmDTO filmDTO) throws ValidationException {
+        log.debug("Запрос на обновление фильма c id- {}", filmDTO.getId());
 
-        return filmStorage.updateFilm(film);
+        Film film = filmService.updateFilm(FilmDTO.FilmDTOToFilm(filmDTO));
+
+        return FilmDTO.FilmToFilmDTO(film);
     }
 
     @GetMapping
-    public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+    public Collection<FilmDTO> getAllFilms() {
+        return filmService.getAllFilms().stream()
+                .map(FilmDTO::FilmToFilmDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) {
-        Optional<Film> film = filmStorage.getFilmById(id);
+    public FilmDTO getFilmById(@PathVariable Long id) {
+        Optional<Film> film = filmService.getFilmById(id);
         if (film.isEmpty()) {
             throw new FilmNotFoundException(String.format("Не найден фильм с id=%s", id));
         }
-        return film.get();
+        return FilmDTO.FilmToFilmDTO(film.get());
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -69,8 +74,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getTopFilms(
+    public Collection<FilmDTO> getTopFilms(
             @RequestParam(value = "count", defaultValue = "10", required = false) Byte count) {
-        return filmService.getMostPopularFilms(count);
+        return filmService.getMostPopularFilms(count).stream()
+                .map(FilmDTO::FilmToFilmDTO)
+                .collect(Collectors.toList());
     }
 }
