@@ -66,14 +66,16 @@ public class UserService {
         checkUserAvailability(friendId);
 
         Set<Long> userFriends = friends.get(userId);
-        if (userFriends == null) return null;
+        if (userFriends == null) return new ArrayList<>();
 
         Set<Long> friendFriends = friends.get(friendId);
-        if (friendFriends == null) return null;
+        if (friendFriends == null) return new ArrayList<>();
 
-        userFriends.retainAll(friendFriends);
+        Set<Long> resultFriends = new HashSet<>(userFriends);
 
-        return userFriends.stream()
+        resultFriends.retainAll(friendFriends);
+
+        return resultFriends.stream()
                 .map(x -> userStorage.getUserById(x).get())
                 .collect(Collectors.toList());
     }
