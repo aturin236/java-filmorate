@@ -22,4 +22,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private short duration;
+    private RatingMPAA rating;
 }

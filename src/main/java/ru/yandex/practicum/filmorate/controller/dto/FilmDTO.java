@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.RatingMPAA;
 import ru.yandex.practicum.filmorate.model.service.IdGeneratorFilm;
 
 import javax.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class FilmDTO {
     private LocalDate releaseDate;
     @Positive
     private short duration;
+    private RatingMPAA rating;
 
     public static Film FilmDTOToFilm(FilmDTO filmDTO) throws ValidationException {
         validate(filmDTO);
@@ -38,6 +40,7 @@ public class FilmDTO {
                 .description(filmDTO.getDescription())
                 .releaseDate(filmDTO.getReleaseDate())
                 .duration(filmDTO.getDuration())
+                .rating(filmDTO.getRating())
                 .build();
 
         if (filmDTO.getId() != 0) {
@@ -56,6 +59,7 @@ public class FilmDTO {
                 .releaseDate(film.getReleaseDate())
                 .duration(film.getDuration())
                 .id(film.getId())
+                .rating(film.getRating())
                 .build();
     }
 

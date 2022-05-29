@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.yandex.practicum.filmorate.controller.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.InMemoryFilmService;
 import ru.yandex.practicum.filmorate.storage.factory.FilmStorageFactory;
 import ru.yandex.practicum.filmorate.storage.factory.UserStorageFactory;
 
@@ -21,7 +21,7 @@ class FilmControllerTest {
     @BeforeEach
     void createContext() {
         filmController = new FilmController(
-                new FilmService(
+                new InMemoryFilmService(
                         FilmStorageFactory.getDefault(),
                         UserStorageFactory.getDefault()
                 )
