@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.service.IdGeneratorUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -41,8 +40,6 @@ public class UserDTO {
 
         if (userDTO.getId() != 0) {
             user.setId(userDTO.getId());
-        } else {
-            user.setId(IdGeneratorUser.nextId());
         }
 
         return user;

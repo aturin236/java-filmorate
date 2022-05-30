@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class InMemoryFilmService implements FilmService{
+public class InMemoryFilmService implements FilmService {
     private final Map<Long, Set<Long>> filmsLikes = new HashMap<>();
 
     private final FilmStorage filmStorage;

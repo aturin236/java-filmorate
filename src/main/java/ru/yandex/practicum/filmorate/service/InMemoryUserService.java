@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class InMemoryUserService implements UserService{
+public class InMemoryUserService implements UserService {
     private final Map<Long, Set<Long>> friends = new HashMap<>();
 
     private final UserStorage userStorage;

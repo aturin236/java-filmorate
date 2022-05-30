@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RatingMPAA {
     @NonNull
     @EqualsAndHashCode.Exclude
