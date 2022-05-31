@@ -18,19 +18,24 @@ public class UserStorageSQL {
 
     public static User makeUser(ResultSet rs) throws SQLException {
         return User.builder()
-                .id(rs.getInt("UserID"))
-                .login(rs.getString("Login"))
-                .name(rs.getString("Name"))
-                .email(rs.getString("Email"))
-                .birthday(rs.getDate("Birthday").toLocalDate())
+                .id(rs.getInt("Users.UserID"))
+                .login(rs.getString("Users.Login"))
+                .name(rs.getString("Users.Name"))
+                .email(rs.getString("Users.Email"))
+                .birthday(rs.getDate("Users.Birthday").toLocalDate())
                 .build();
     }
 
     public static String selectUsersSqlQuery() {
-        return "SELECT * FROM \"Films\"";
+        return "SELECT \"Users\".\"UserID\",\n" +
+                "       \"Users\".\"Login\",\n" +
+                "       \"Users\".\"Name\",\n" +
+                "       \"Users\".\"Email\",\n" +
+                "       \"Users\".\"Birthday\"\n" +
+                "FROM \"Users\"";
     }
 
     public static String addWhereForSelectUser() {
-        return " WHERE \"UserID\" = ?";
+        return " WHERE \"Users\".\"UserID\" = ?";
     }
 }

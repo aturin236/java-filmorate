@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -14,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component("UserStorageDAO")
+@Slf4j
 public class UserStorageDAO implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -61,7 +64,15 @@ public class UserStorageDAO implements UserStorage {
     public Optional<User> getUserById(Long id) {
         String sqlQuery = UserStorageSQL.selectUsersSqlQuery() + UserStorageSQL.addWhereForSelectUser();
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> UserStorageSQL.makeUser(rs), id));
+        User user = null;
+
+        try {
+            user = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> UserStorageSQL.makeUser(rs), id);
+        } catch (EmptyResultDataAccessException e) {
+            log.info(e.getMessage());
+        }
+
+        return Optional.ofNullable(user);
     }
 
     private void updateNameUser(User user) {

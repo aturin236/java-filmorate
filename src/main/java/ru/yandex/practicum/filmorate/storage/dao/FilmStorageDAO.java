@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -59,6 +60,14 @@ public class FilmStorageDAO implements FilmStorage {
     public Optional<Film> getFilmById(Long id) {
         String sqlQuery = FilmStorageSQL.selectFilmsSqlQuery() + FilmStorageSQL.addWhereForSelectFilm();
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> FilmStorageSQL.makeFilm(rs), id));
+        Film film = null;
+
+        try {
+            film = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> FilmStorageSQL.makeFilm(rs), id);
+        } catch (EmptyResultDataAccessException e) {
+            log.info(e.getMessage());
+        }
+
+        return Optional.ofNullable(film);
     }
 }
