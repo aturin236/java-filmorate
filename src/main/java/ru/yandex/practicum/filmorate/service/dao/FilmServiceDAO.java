@@ -1,40 +1,37 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorageSQL;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
 
-@Service
-public class InMemoryFilmService implements FilmService {
-    private final Map<Long, Set<Long>> filmsLikes = new HashMap<>();
-
+@Service("FilmServiceDAO")
+public class FilmServiceDAO implements FilmService {
+    private final JdbcTemplate jdbcTemplate;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    @Autowired
-    public InMemoryFilmService(@Qualifier("InMemoryFilmStorage") FilmStorage filmStorage,
-                               @Qualifier("InMemoryUserStorage") UserStorage userStorage) {
+
+    public FilmServiceDAO(JdbcTemplate jdbcTemplate,
+                          @Qualifier("FilmStorageDAO") FilmStorage filmStorage,
+                          @Qualifier("InMemoryUserStorage") UserStorage userStorage) {
+        this.jdbcTemplate = jdbcTemplate;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
 
     public Film addFilm(Film film) throws ValidationException {
-        Film addedFilm = filmStorage.addFilm(film);
-
-        if (!filmsLikes.containsKey(film.getId())) {
-            filmsLikes.put(film.getId(), new HashSet<>());
-        }
-
-        return addedFilm;
+        return filmStorage.addFilm(film);
     }
 
     public Film updateFilm(Film film) throws ValidationException {
@@ -53,32 +50,26 @@ public class InMemoryFilmService implements FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        Set<Long> filmLikes = filmsLikes.getOrDefault(filmId, new HashSet<>());
-        filmLikes.add(userId);
-        filmsLikes.put(filmId, filmLikes);
+        String sqlQuery = "MERGE INTO \"FilmLikes\" KEY (\"FilmID\", \"UserID\") values (?, ?)";
+        jdbcTemplate.update(sqlQuery
+                , filmId
+                , userId);
     }
 
     public void deleteLike(Long filmId, Long userId) {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        Set<Long> filmLikes = filmsLikes.get(filmId);
-
-        if (filmLikes == null) return;
-
-        filmLikes.remove(userId);
-
-        filmsLikes.put(filmId, filmLikes);
+        String sqlQuery = "DELETE FROM \"FilmLikes\" WHERE \"FilmID\"=? AND \"UserID\"=?";
+        jdbcTemplate.update(sqlQuery
+                , filmId
+                , userId);
     }
 
     public Collection<Film> getMostPopularFilms(Byte count) {
-        return filmsLikes.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparing(x -> 1 - x.size())))
-                .limit(count)
-                .map(x -> filmStorage.getFilmById(x.getKey()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        String sqlQuery = FilmStorageSQL.selectFilmsSqlQuery() + addWhereForMostPopularFilms();
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> FilmStorageSQL.makeFilm(rs));
     }
 
     private void checkUserAvailability(Long id) {
@@ -91,5 +82,14 @@ public class InMemoryFilmService implements FilmService {
         if (filmStorage.getFilmById(id).isEmpty()) {
             throw new FilmNotFoundException(String.format("Не найден фильм с id=%s", id));
         }
+    }
+
+    private String addWhereForMostPopularFilms() {
+        return " WHERE F.\"FilmID\" IN\n" +
+                "    (SELECT \"filmID\"\n" +
+                "     FROM \"FilmLikes\"\n" +
+                "     GROUP BY \"filmID\"\n" +
+                "     ORDER BY COUNT(\"userID\") DESC\n" +
+                "     LIMIT ?)";
     }
 }

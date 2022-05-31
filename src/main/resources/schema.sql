@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS "FilmLikes" (
 CREATE TABLE IF NOT EXISTS "Friends" (
     "UserID" int   NOT NULL,
     "FriendID" int   NOT NULL,
-    "Status" boolean,
     CONSTRAINT "pk_Friends" PRIMARY KEY (
         "UserID","FriendID"
      )

@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.yandex.practicum.filmorate.controller.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.service.InMemoryUserService;
+import ru.yandex.practicum.filmorate.service.memory.InMemoryUserService;
 import ru.yandex.practicum.filmorate.storage.factory.UserStorageFactory;
 
 import java.time.LocalDate;
