@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -43,6 +44,10 @@ public class UserStorageDAO implements UserStorage {
 
     @Override
     public User updateUser(User user) {
+        if (getUserById(user.getId()).isEmpty()) {
+            throw new UserNotFoundException(String.format("Пользователь с id %s не найден",
+                    user.getId()));
+        }
         jdbcTemplate.update(UserStorageSQL.updateUser()
                 , user.getLogin()
                 , user.getName()

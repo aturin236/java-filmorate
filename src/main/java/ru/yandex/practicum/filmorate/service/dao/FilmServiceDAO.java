@@ -24,7 +24,7 @@ public class FilmServiceDAO implements FilmService {
 
     public FilmServiceDAO(JdbcTemplate jdbcTemplate,
                           @Qualifier("FilmStorageDAO") FilmStorage filmStorage,
-                          @Qualifier("InMemoryUserStorage") UserStorage userStorage) {
+                          @Qualifier("UserStorageDAO") UserStorage userStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
@@ -50,7 +50,7 @@ public class FilmServiceDAO implements FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        String sqlQuery = "MERGE INTO \"FilmLikes\" KEY (\"FilmID\", \"UserID\") values (?, ?)";
+        String sqlQuery = "MERGE INTO FilmLikes KEY (FilmID, UserID) values (?, ?)";
         jdbcTemplate.update(sqlQuery
                 , filmId
                 , userId);
@@ -60,16 +60,15 @@ public class FilmServiceDAO implements FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        String sqlQuery = "DELETE FROM \"FilmLikes\" WHERE \"FilmID\"=? AND \"UserID\"=?";
+        String sqlQuery = "DELETE FROM FilmLikes WHERE FilmID=? AND UserID=?";
         jdbcTemplate.update(sqlQuery
                 , filmId
                 , userId);
     }
 
     public Collection<Film> getMostPopularFilms(Byte count) {
-        String sqlQuery = FilmStorageSQL.selectFilmsSqlQuery() + addWhereForMostPopularFilms();
-
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> FilmStorageSQL.makeFilm(rs));
+        return jdbcTemplate.query(FilmStorageSQL.mostPopularFilmsQuery(),
+                (rs, rowNum) -> FilmStorageSQL.makeFilm(rs), count);
     }
 
     private void checkUserAvailability(Long id) {
@@ -82,14 +81,5 @@ public class FilmServiceDAO implements FilmService {
         if (filmStorage.getFilmById(id).isEmpty()) {
             throw new FilmNotFoundException(String.format("Не найден фильм с id=%s", id));
         }
-    }
-
-    private String addWhereForMostPopularFilms() {
-        return " WHERE F.\"FilmID\" IN\n" +
-                "    (SELECT \"filmID\"\n" +
-                "     FROM \"FilmLikes\"\n" +
-                "     GROUP BY \"filmID\"\n" +
-                "     ORDER BY COUNT(\"userID\") DESC\n" +
-                "     LIMIT ?)";
     }
 }

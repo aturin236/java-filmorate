@@ -7,13 +7,13 @@ import java.sql.SQLException;
 
 public class UserStorageSQL {
     public static String insertUser() {
-        return "INSERT INTO \"Users\"(\"Login\", \"Name\", \"Email\", \"Birthday\")" +
+        return "INSERT INTO Users(Login, Name, Email, Birthday)" +
                 " values (?, ?, ?, ?)";
     }
 
     public static String updateUser() {
-        return "UPDATE \"Users\" SET \"Login\" = ?, \"Name\" = ?, \"Email\" = ?," +
-                " \"Birthday\" = ? WHERE \"UserID\" = ?";
+        return "UPDATE Users SET Login = ?, Name = ?, Email = ?," +
+                " Birthday = ? WHERE UserID = ?";
     }
 
     public static User makeUser(ResultSet rs) throws SQLException {
@@ -27,15 +27,15 @@ public class UserStorageSQL {
     }
 
     public static String selectUsersSqlQuery() {
-        return "SELECT \"Users\".\"UserID\",\n" +
-                "       \"Users\".\"Login\",\n" +
-                "       \"Users\".\"Name\",\n" +
-                "       \"Users\".\"Email\",\n" +
-                "       \"Users\".\"Birthday\"\n" +
-                "FROM \"Users\"";
+        return "SELECT Users.UserID,\n" +
+                "       Users.Login,\n" +
+                "       Users.Name,\n" +
+                "       Users.Email,\n" +
+                "       Users.Birthday\n" +
+                "FROM Users";
     }
 
     public static String addWhereForSelectUser() {
-        return " WHERE \"Users\".\"UserID\" = ?";
+        return " WHERE Users.UserID = ?";
     }
 }

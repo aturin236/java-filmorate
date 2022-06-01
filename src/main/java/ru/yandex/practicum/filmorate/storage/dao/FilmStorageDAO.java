@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -40,6 +41,10 @@ public class FilmStorageDAO implements FilmStorage {
     }
 
     public Film updateFilm(Film film) {
+        if (getFilmById(film.getId()).isEmpty()) {
+            throw new FilmNotFoundException(String.format("Фильм с id %s не найден",
+                    film.getId()));
+        }
         jdbcTemplate.update(FilmStorageSQL.updateFilm()
                 , film.getName()
                 , film.getDescription()

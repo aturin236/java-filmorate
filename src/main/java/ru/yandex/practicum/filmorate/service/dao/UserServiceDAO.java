@@ -46,7 +46,7 @@ public class UserServiceDAO implements UserService {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
-        String sqlQuery = "MERGE INTO \"Friends\" KEY (\"UserID\", \"FriendID\") values (:userId, :friendId)";
+        String sqlQuery = "MERGE INTO Friends KEY (UserID, FriendID) values (:userId, :friendId)";
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         paramSource.addValue("friendId", friendId);
@@ -57,7 +57,7 @@ public class UserServiceDAO implements UserService {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
-        String sqlQuery = "DELETE FROM \"Friends\" WHERE \"UserID\"=:userId AND \"FriendID\"=:friendId";
+        String sqlQuery = "DELETE FROM Friends WHERE UserID=:userId AND FriendID=:friendId";
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         paramSource.addValue("friendId", friendId);
@@ -91,19 +91,19 @@ public class UserServiceDAO implements UserService {
     }
 
     private String addJoinForGetFriends() {
-        return " INNER JOIN \"Friends\" ON \"Users\".\"UserID\" = \"Friends\".\"FriendID\"\n" +
-                "WHERE \"Friends\".\"UserID\" = :userId";
+        return " INNER JOIN Friends ON Users.UserID = Friends.FriendID\n" +
+                "WHERE Friends.UserID = :userId";
     }
 
     private String addWhereForCommonFriends() {
-        return " WHERE \"UserID\" IN\n" +
-                "    (SELECT \"FriendID\"\n" +
-                "     FROM \"Friends\"\n" +
-                "     WHERE \"UserID\" = :userId\n" +
-                "       AND \"FriendID\" <> :friendId\n" +
-                "     UNION SELECT \"FriendID\"\n" +
-                "     FROM \"Friends\"\n" +
-                "     WHERE \"UserID\" = :friendId\n" +
-                "       AND \"FriendID\" <> :userId)";
+        return " WHERE UserID IN\n" +
+                "    (SELECT FriendID\n" +
+                "     FROM Friends\n" +
+                "     WHERE UserID = :userId\n" +
+                "       AND FriendID <> :friendId\n" +
+                "     UNION SELECT FriendID\n" +
+                "     FROM Friends\n" +
+                "     WHERE UserID = :friendId\n" +
+                "       AND FriendID <> :userId)";
     }
 }
