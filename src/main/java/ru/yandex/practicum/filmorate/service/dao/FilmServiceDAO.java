@@ -17,6 +17,8 @@ import java.util.Optional;
 
 @Service("FilmServiceDAO")
 public class FilmServiceDAO implements FilmService {
+    public static final String ADD_LIKE_QUERY = "MERGE INTO FilmLikes KEY (FilmID, UserID) values (?, ?)";
+    public static final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE FilmID=? AND UserID=?";
     private final JdbcTemplate jdbcTemplate;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
@@ -50,8 +52,7 @@ public class FilmServiceDAO implements FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        String sqlQuery = "MERGE INTO FilmLikes KEY (FilmID, UserID) values (?, ?)";
-        jdbcTemplate.update(sqlQuery
+        jdbcTemplate.update(ADD_LIKE_QUERY
                 , filmId
                 , userId);
     }
@@ -60,8 +61,7 @@ public class FilmServiceDAO implements FilmService {
         checkUserAvailability(userId);
         checkFilmAvailability(filmId);
 
-        String sqlQuery = "DELETE FROM FilmLikes WHERE FilmID=? AND UserID=?";
-        jdbcTemplate.update(sqlQuery
+        jdbcTemplate.update(DELETE_LIKE_QUERY
                 , filmId
                 , userId);
     }

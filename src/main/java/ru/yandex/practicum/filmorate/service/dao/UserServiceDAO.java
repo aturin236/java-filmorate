@@ -17,6 +17,20 @@ import java.util.Optional;
 
 @Service("UserServiceDAO")
 public class UserServiceDAO implements UserService {
+    private static final String ADD_FRIEND_QUERY = "MERGE INTO Friends KEY (UserID, FriendID)" +
+            " values (:userId, :friendId)";
+    public static final String DELETE_FRIEND_QUERY = "DELETE FROM Friends WHERE UserID=:userId AND FriendID=:friendId";
+    public static final String JOIN_FOR_GET_FRIENDS = " INNER JOIN Friends ON Users.UserID = Friends.FriendID" +
+            " WHERE Friends.UserID = :userId";
+    public static final String WHERE_FOR_COMMON_FRIENDS = " WHERE UserID IN\n" +
+            "    (SELECT FriendID\n" +
+            "     FROM Friends\n" +
+            "     WHERE UserID = :userId\n" +
+            "       AND FriendID <> :friendId\n" +
+            "     UNION SELECT FriendID\n" +
+            "     FROM Friends\n" +
+            "     WHERE UserID = :friendId\n" +
+            "       AND FriendID <> :userId)";
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final UserStorage userStorage;
 
@@ -46,28 +60,26 @@ public class UserServiceDAO implements UserService {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
-        String sqlQuery = "MERGE INTO Friends KEY (UserID, FriendID) values (:userId, :friendId)";
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         paramSource.addValue("friendId", friendId);
-        jdbcTemplate.update(sqlQuery, paramSource);
+        jdbcTemplate.update(ADD_FRIEND_QUERY, paramSource);
     }
 
     public void deleteFriend(Long userId, Long friendId) {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
-        String sqlQuery = "DELETE FROM Friends WHERE UserID=:userId AND FriendID=:friendId";
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         paramSource.addValue("friendId", friendId);
-        jdbcTemplate.update(sqlQuery, paramSource);
+        jdbcTemplate.update(DELETE_FRIEND_QUERY, paramSource);
     }
 
     public Collection<User> getFriends(Long userId) {
         checkUserAvailability(userId);
 
-        String sqlQuery = UserStorageSQL.selectUsersSqlQuery() + addJoinForGetFriends();
+        String sqlQuery = UserStorageSQL.selectUsersSqlQuery() + JOIN_FOR_GET_FRIENDS;
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         return jdbcTemplate.query(sqlQuery, paramSource, (rs, rowNum) -> UserStorageSQL.makeUser(rs));
@@ -77,7 +89,7 @@ public class UserServiceDAO implements UserService {
         checkUserAvailability(userId);
         checkUserAvailability(friendId);
 
-        String sqlQuery = UserStorageSQL.selectUsersSqlQuery() + addWhereForCommonFriends();
+        String sqlQuery = UserStorageSQL.selectUsersSqlQuery() + WHERE_FOR_COMMON_FRIENDS;
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
         paramSource.addValue("friendId", friendId);
@@ -88,22 +100,5 @@ public class UserServiceDAO implements UserService {
         if (userStorage.getUserById(id).isEmpty()) {
             throw new UserNotFoundException(String.format("Не найден пользователь с id=%s", id));
         }
-    }
-
-    private String addJoinForGetFriends() {
-        return " INNER JOIN Friends ON Users.UserID = Friends.FriendID\n" +
-                "WHERE Friends.UserID = :userId";
-    }
-
-    private String addWhereForCommonFriends() {
-        return " WHERE UserID IN\n" +
-                "    (SELECT FriendID\n" +
-                "     FROM Friends\n" +
-                "     WHERE UserID = :userId\n" +
-                "       AND FriendID <> :friendId\n" +
-                "     UNION SELECT FriendID\n" +
-                "     FROM Friends\n" +
-                "     WHERE UserID = :friendId\n" +
-                "       AND FriendID <> :userId)";
     }
 }
